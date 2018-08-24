@@ -14,7 +14,7 @@
   ],
   "require": {
     "php": "^7.2",
-    "sylius/sylius": "^1.0.0",
+    "sylius/sylius": "^1.2.0",
     "webmozart/assert": "*"
   },
   "config": {
