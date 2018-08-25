@@ -17,7 +17,7 @@ use SnakeTn\CatalogPromotion\Model\ChannelPricing;
  * Class ChannelPricingPromotionApplicator
  *
  */
-class ChannelPricingPromotionApplicator implements ChannelPricingPromotionApplicatorInterface
+class ChannelPricingFixedAmountPromotionApplicator implements ChannelPricingPromotionApplicatorInterface
 {
     /**
      * @param ChannelPricing $channelPricing
@@ -25,6 +25,8 @@ class ChannelPricingPromotionApplicator implements ChannelPricingPromotionApplic
      */
     public function apply(ChannelPricing $channelPricing, $promotionAmount): void
     {
-        $channelPricing->setPromotionAmount($channelPricing->getPromotionAmount() + $promotionAmount);
+        $channelPricing->setPromotionAmount(0);
+        $channelPricing->setPrice($promotionAmount['price']);
+        $channelPricing->setBeforeTaxPrice($promotionAmount['price_before_tax']);
     }
 }

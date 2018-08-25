@@ -9,9 +9,7 @@
  * file that was distributed with this source code.
  */
 
-
 namespace SnakeTn\CatalogPromotion\Form\Type;
-
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

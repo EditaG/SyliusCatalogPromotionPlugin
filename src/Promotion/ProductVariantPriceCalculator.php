@@ -18,6 +18,10 @@ use Sylius\Component\Core\Exception\MissingChannelConfigurationException;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class ProductVariantPriceCalculator
+ *
+ */
 class ProductVariantPriceCalculator implements ProductVariantPriceCalculatorInterface
 {
     /**
@@ -25,11 +29,24 @@ class ProductVariantPriceCalculator implements ProductVariantPriceCalculatorInte
      */
     private $promotionProcessor;
 
+    /**
+     * ProductVariantPriceCalculator constructor.
+     *
+     * @param Processor $promotionProcessor
+     */
     public function __construct(Processor $promotionProcessor)
     {
         $this->promotionProcessor = $promotionProcessor;
     }
 
+    /**
+     * @param ProductVariantInterface $productVariant
+     * @param array                   $context
+     *
+     * @return int
+     *
+     * @throws \Exception
+     */
     public function calculate(ProductVariantInterface $productVariant, array $context): int
     {
         Assert::keyExists($context, 'channel');
@@ -47,5 +64,4 @@ class ProductVariantPriceCalculator implements ProductVariantPriceCalculatorInte
 
         return $channelPricing->getPromotionSubjectTotal();
     }
-
 }

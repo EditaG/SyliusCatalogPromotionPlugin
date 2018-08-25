@@ -26,6 +26,12 @@ services:
       - "@catalog-promotion.channel-pricing-promotion-applicator"
     tags: [{name: catalog-promotion.action-executor, type: fixed_discount, label: Fixed discount, form-type: Sylius\Bundle\CoreBundle\Form\Type\Promotion\Action\ChannelBasedFixedDiscountConfigurationType}]
 
+  catalog-promotion.fixed-amount-action-executor:
+    class: SnakeTn\CatalogPromotion\Promotion\Action\FixedPricePromotionActionExecutor
+    arguments:
+      - "@snake_tn.catalog_promotion.promotion.applicator.channel_pricing_fixed_amount_promotion_applicator"
+    tags: [{name: catalog-promotion.action-executor, type: fixed_amount, label: Fixed amount, form-type: SnakeTn\CatalogPromotion\Form\Type\Action\ChannelBasedFixedPriceConfigurationType}]
+
   catalog-promotion.percentage-discount-action-executor:
     class: SnakeTn\CatalogPromotion\Promotion\Action\PercentageDiscountPromotionActionExecutor
     arguments:
@@ -35,7 +41,6 @@ services:
 
   catalog-promotion.factory.promotion:
     class: SnakeTn\CatalogPromotion\Factory\PromotionFactory
-
 
   catalog-promotion.registry_promotion_rule_checker:
     class: Sylius\Component\Registry\ServiceRegistry
@@ -54,6 +59,7 @@ services:
 
   catalog-promotion.form_registry.promotion_action_executor:
     class: Sylius\Bundle\ResourceBundle\Form\Registry\FormTypeRegistry
+
 
   catalog-promotion.channel-pricing-promotion-applicator:
     class: SnakeTn\CatalogPromotion\Promotion\Applicator\ChannelPricingPromotionApplicator
@@ -79,3 +85,21 @@ services:
     arguments: [%catalog-promotion.promotion_actions%]
     tags:
       - { name: form.type}
+
+  snake_tn.catalog_promotion.form.type.action.channel_based_fixed_price_configuration_type:
+      class: SnakeTn\CatalogPromotion\Form\Type\Action\ChannelBasedFixedPriceConfigurationType
+      tags:
+          - { name: form.type, alias: SnakeTn\CatalogPromotion\Form\Type\Action\ChannelBasedFixedPriceConfigurationType }
+
+  snake_tn.catalog_promotion.form.type.action.fixed_price_discount_configuration_type:
+      class: SnakeTn\CatalogPromotion\Form\Type\Action\FixedPriceDiscountConfigurationType
+      tags:
+          - { name: form.type, alias: SnakeTn\CatalogPromotion\Form\Type\Action\FixedPriceDiscountConfigurationType }
+
+  snake_tn.catalog_promotion.form.type.action.taxed_price_configuration_type:
+      class: SnakeTn\CatalogPromotion\Form\Type\Action\TaxedPriceConfigurationType
+      tags:
+          - { name: form.type, alias: SnakeTn\CatalogPromotion\Form\Type\Action\TaxedPriceConfigurationType }
+
+  snake_tn.catalog_promotion.promotion.applicator.channel_pricing_fixed_amount_promotion_applicator:
+      class: SnakeTn\CatalogPromotion\Promotion\Applicator\ChannelPricingFixedAmountPromotionApplicator

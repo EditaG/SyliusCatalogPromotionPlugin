@@ -19,7 +19,6 @@ use Webmozart\Assert\Assert;
 
 class FixedDiscountPromotionActionExecutor extends DiscountPromotionActionExecutor
 {
-
     /**
      * @param array $configuration
      */

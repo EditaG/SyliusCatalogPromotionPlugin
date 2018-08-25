@@ -13,17 +13,19 @@ namespace SnakeTn\CatalogPromotion\Promotion\Action;
 
 use SnakeTn\CatalogPromotion\Model\ChannelPricing;
 use SnakeTn\CatalogPromotion\Entity\PromotionAction;
+use SnakeTn\CatalogPromotion\Entity\Promotion;
+use Sylius\Component\Promotion\Model\PromotionSubjectInterface;
 use Webmozart\Assert\Assert;
 
-class PercentageDiscountPromotionActionExecutor extends DiscountPromotionActionExecutor
+class FixedPricePromotionActionExecutor extends DiscountPromotionActionExecutor
 {
     /**
      * @param array $configuration
      */
     protected function isConfigurationValid(array $configuration)
     {
-        Assert::keyExists($configuration, 'percentage');
-        Assert::float($configuration['percentage']);
+        Assert::keyExists($configuration, 'amount');
+        Assert::isArray($configuration['amount']);
     }
 
     /**
@@ -32,32 +34,36 @@ class PercentageDiscountPromotionActionExecutor extends DiscountPromotionActionE
      *
      * @return bool
      */
-    public function execute(ChannelPricing $subject, PromotionAction $action)
+    public function execute(ChannelPricing $subject, PromotionAction $action): bool
     {
+        if (!isset($action->getConfiguration()[$subject->getChannelCode()])) {
+            return false;
+        }
 
         try {
-            $this->isConfigurationValid($action->getConfiguration());
+            $this->isConfigurationValid($action->getConfiguration()[$subject->getChannelCode()]);
         } catch (\InvalidArgumentException $exception) {
             return false;
         }
 
         $promotionAmount = $this->calculatePromotionAmount(
             $subject->getPromotionSubjectTotal(),
-            $action->getConfiguration()['percentage']
+            $action->getConfiguration()[$subject->getChannelCode()]['amount']
         );
 
         $this->promotionApplicator->apply($subject, $promotionAmount);
+
+        return true;
     }
 
-
     /**
-     * @param $promotionSubjectTotal
-     * @param $percentage
+     * @param int $promotionSubjectTotal
+     * @param int $targetPromotionAmount
      *
-     * @return int
+     * @return mixed
      */
-    private function calculatePromotionAmount($promotionSubjectTotal, $percentage)
+    private function calculatePromotionAmount(int $promotionSubjectTotal, $targetPromotionAmount)
     {
-        return (int) round($promotionSubjectTotal * $percentage);
+        return $targetPromotionAmount;
     }
 }

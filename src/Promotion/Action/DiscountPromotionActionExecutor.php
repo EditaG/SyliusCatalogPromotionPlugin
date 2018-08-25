@@ -12,6 +12,7 @@
 namespace SnakeTn\CatalogPromotion\Promotion\Action;
 
 use SnakeTn\CatalogPromotion\Promotion\Applicator\ChannelPricingPromotionApplicator;
+use SnakeTn\CatalogPromotion\Promotion\Applicator\ChannelPricingPromotionApplicatorInterface;
 
 abstract class DiscountPromotionActionExecutor implements ActionExecutorInterface
 {
@@ -24,7 +25,7 @@ abstract class DiscountPromotionActionExecutor implements ActionExecutorInterfac
      * FixedDiscountPromotionActionCommand constructor.
      * @param ChannelPricingPromotionApplicatorInterface $promotionApplicator
      */
-    public function __construct(ChannelPricingPromotionApplicator $promotionApplicator)
+    public function __construct(ChannelPricingPromotionApplicatorInterface $promotionApplicator)
     {
         $this->promotionApplicator = $promotionApplicator;
     }
