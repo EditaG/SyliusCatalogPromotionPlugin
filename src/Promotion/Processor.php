@@ -75,6 +75,7 @@ class Processor
         foreach ($this->promotionRepository->findActiveByChannel($channel) as $promotion) {
             if ($this->isEligible($productVariant, $promotion)) {
                 $this->apply($channelPricing, $promotion);
+                $this->setType($channelPricing, $promotion);
             }
         }
 
@@ -129,6 +130,15 @@ class Processor
         foreach ($promotion->getActions() as $action) {
             $this->getActionExecutorByActionType($action->getType())->execute($channelPricing, $action);
         }
+    }
+
+    /**
+     * @param ChannelPricing $channelPricing
+     * @param Promotion      $promotion
+     */
+    private function setType(ChannelPricing $channelPricing, Promotion $promotion)
+    {
+        $channelPricing->setPromotionType(substr($promotion->getCode(), strrpos($promotion->getCode(), ' ') + 1));
     }
 
     /**

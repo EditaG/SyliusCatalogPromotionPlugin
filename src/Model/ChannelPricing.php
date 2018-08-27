@@ -14,7 +14,7 @@ namespace SnakeTn\CatalogPromotion\Model;
 use AppBundle\Entity\Pricing\BeforeTaxPriceTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use SnakeTn\CatalogPromotion\Entity\Promotion;
-use Sylius\Component\Core\Model\ChannelPricing as BaseChannelPricing;
+use AppBundle\Entity\Pricing\ChannelPricing as BaseChannelPricing;
 
 /**
  * Class ChannelPricing
