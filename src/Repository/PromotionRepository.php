@@ -25,9 +25,12 @@ class PromotionRepository extends EntityRepository
     public function findActiveByChannel(ChannelInterface $channel)
     {
         return $this->createQueryBuilder('o')
+            ->select('o', 'rules', 'actions')
             ->andWhere('o.startsAt IS NULL OR o.startsAt < :date')
             ->andWhere('o.endsAt IS NULL OR o.endsAt > :date')
             ->andWhere(':channel MEMBER OF o.channels')
+            ->leftJoin('o.rules', 'rules')
+            ->leftJoin('o.actions', 'actions')
             ->setParameter('channel', $channel)
             ->setParameter('date', new \DateTime())
             ->addOrderBy('o.priority', 'DESC')

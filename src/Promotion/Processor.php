@@ -11,6 +11,7 @@
 
 namespace SnakeTn\CatalogPromotion\Promotion;
 
+use Doctrine\Common\Collections\Collection;
 use SnakeTn\CatalogPromotion\Entity\Promotion;
 use SnakeTn\CatalogPromotion\Entity\PromotionRule;
 use SnakeTn\CatalogPromotion\Model\ChannelPricing;
@@ -40,6 +41,11 @@ class Processor
      * @var array|ActionExecutorInterface
      */
     private $actionExecutors = [];
+
+    /**
+     * @var Promotion[]
+     */
+    private $promotions;
 
     /**
      * Processor constructor.
@@ -72,7 +78,7 @@ class Processor
         $channelPricing->setOriginalPrice($originalChannelPricing->getOriginalPrice());
         $channelPricing->setBeforeTaxPrice($originalChannelPricing->getBeforeTaxPrice());
 
-        foreach ($this->promotionRepository->findActiveByChannel($channel) as $promotion) {
+        foreach ($this->getPromotions($channel) as $promotion) {
             if ($this->isEligible($productVariant, $promotion)) {
                 $this->apply($channelPricing, $promotion);
                 $this->setType($channelPricing, $promotion);
@@ -185,5 +191,19 @@ class Processor
             return $this->actionExecutors[$actionType];
         }
         throw new \Exception(sprintf('action type %s is not recognized.', $actionType));
+    }
+
+    /**
+     * @param ChannelInterface $channel
+     *
+     * @return array
+     */
+    private function getPromotions(ChannelInterface $channel): array
+    {
+        if (!$this->promotions) {
+            $this->promotions = $this->promotionRepository->findActiveByChannel($channel);
+        }
+
+        return $this->promotions;
     }
 }
