@@ -11,12 +11,12 @@
 
 namespace SnakeTn\CatalogPromotion\Promotion;
 
+use AppBundle\Service\Provider\CacheProvider;
 use Doctrine\Common\Collections\Collection;
 use SnakeTn\CatalogPromotion\Entity\Promotion;
 use SnakeTn\CatalogPromotion\Entity\PromotionRule;
 use SnakeTn\CatalogPromotion\Model\ChannelPricing;
 use SnakeTn\CatalogPromotion\Promotion\Action\ActionExecutorInterface;
-use SnakeTn\CatalogPromotion\Promotion\Applicator\ChannelPricingPromotionApplicatorInterface;
 use SnakeTn\CatalogPromotion\Promotion\Checker\Rule\RuleCheckerInterface;
 use SnakeTn\CatalogPromotion\Repository\PromotionRepository;
 use Sylius\Component\Core\Model\ChannelInterface;
@@ -48,13 +48,20 @@ class Processor
     protected $promotions;
 
     /**
+     * @var CacheProvider
+     */
+    protected $cahce;
+
+    /**
      * Processor constructor.
      *
-     * @param PromotionRepository $promotionRepository
+     * @param PromotionRepository    $promotionRepository
+     * @param CacheItemPoolInterface $cache
      */
-    public function __construct(PromotionRepository $promotionRepository)
+    public function __construct(PromotionRepository $promotionRepository, CacheProvider $cache)
     {
         $this->promotionRepository = $promotionRepository;
+        $this->cache = $cache;
     }
 
     /**
@@ -116,13 +123,19 @@ class Processor
      */
     protected function isEligible(ProductVariantInterface $productVariant, Promotion $promotion)
     {
-        foreach ($promotion->getRules() as $rule) {
-            if (!$this->isEligibleToRule($productVariant, $rule)) {
-                return false;
+        $now = new \DateTime();
+
+        if ($promotion->getStartsAt() < $now && $promotion->getEndsAt() > $now) {
+            foreach ($promotion->getRules() as $rule) {
+                if (!$this->isEligibleToRule($productVariant, $rule)) {
+                    return false;
+                }
             }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -201,7 +214,16 @@ class Processor
     protected function getPromotions(ChannelInterface $channel): array
     {
         if (!$this->promotions) {
-            $this->promotions = $this->promotionRepository->findActiveByChannel($channel);
+            $cacheKey = Promotion::CACHE_TAG_GROUP.'_'.$channel->getCode();
+
+            $callable = [$this->promotionRepository, 'findActiveByChannel'];
+            $this->promotions = $this->cache->getItemByKey(
+                $cacheKey,
+                $callable,
+                [$channel],
+                43200,
+                [Promotion::CACHE_TAG_GROUP]
+            );
         }
 
         return $this->promotions;

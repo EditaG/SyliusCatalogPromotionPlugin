@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace SnakeTn\CatalogPromotion\Entity;
 
+use AppBundle\Entity\CacheTagAwareInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Core\Model\PromotionInterface;
@@ -29,8 +30,10 @@ use Sylius\Component\Channel\Model\ChannelInterface;
  *
  * @package SnakeTn\CatalogPromotion\Entity
  */
-class Promotion implements ResourceInterface, CodeAwareInterface, PromotionInterface
+class Promotion implements ResourceInterface, CodeAwareInterface, PromotionInterface, CacheTagAwareInterface
 {
+    const CACHE_TAG_GROUP = 'promotions';
+
     use TimestampableTrait;
     /**
      * @var
@@ -79,6 +82,8 @@ class Promotion implements ResourceInterface, CodeAwareInterface, PromotionInter
      * @var ArrayCollection|PromotionRule[]
      */
     protected $rules;
+
+    protected $cacheTags = [self::CACHE_TAG_GROUP];
 
     /**
      * Promotion constructor.
@@ -449,5 +454,13 @@ class Promotion implements ResourceInterface, CodeAwareInterface, PromotionInter
     public function hasAction(PromotionActionInterface $action): bool
     {
         // TODO: Implement hasAction() method.
+    }
+
+    /**
+     * @return array
+     */
+    public function getCacheTags(): array
+    {
+        return $this->cacheTags;
     }
 }
