@@ -6,7 +6,7 @@ services:
     class: SnakeTn\CatalogPromotion\Promotion\Processor
     arguments:
       - "@=service('doctrine.orm.entity_manager').getRepository('CatalogPromotionPlugin:Promotion')"
-      - '@sylius.repository.promotion'
+      - '@AppBundle\Service\Provider\CacheProvider'
 
   catalog-promotion.has-taxon-rule-checker:
     class: SnakeTn\CatalogPromotion\Promotion\Checker\Rule\HasTaxonRuleChecker
