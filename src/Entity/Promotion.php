@@ -35,50 +35,50 @@ class Promotion implements ResourceInterface, CodeAwareInterface, PromotionInter
     /**
      * @var
      */
-    private $id;
+    protected $id;
     /**
      * @var
      */
-    private $code;
+    protected $code;
     /**
      * @var
      */
-    private $name;
+    protected $name;
     /**
      * @var
      */
-    private $description;
+    protected $description;
     /**
      * @var int
      */
-    private $priority = 0;
+    protected $priority = 0;
     /**
      * @var bool
      */
-    private $exclusive = false;
+    protected $exclusive = false;
     /**
      * @var
      */
-    private $startsAt;
+    protected $startsAt;
     /**
      * @var
      */
-    private $endsAt;
+    protected $endsAt;
 
     /**
      * @var \Sylius\Component\Core\Model\ChannelPricingInterface[]
      */
-    private $channels;
+    protected $channels;
 
     /**
      * @var ArrayCollection|PromotionAction[]
      */
-    private $actions;
+    protected $actions;
 
     /**
      * @var ArrayCollection|PromotionRule[]
      */
-    private $rules;
+    protected $rules;
 
     /**
      * Promotion constructor.
@@ -451,4 +451,3 @@ class Promotion implements ResourceInterface, CodeAwareInterface, PromotionInter
         // TODO: Implement hasAction() method.
     }
 }
-

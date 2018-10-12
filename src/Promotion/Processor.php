@@ -31,21 +31,21 @@ class Processor
     /**
      * @var PromotionRepository
      */
-    private $promotionRepository;
+    protected $promotionRepository;
 
     /**
      * @var array|RuleCheckerInterface
      */
-    private $ruleCheckers = [];
+    protected $ruleCheckers = [];
     /**
      * @var array|ActionExecutorInterface
      */
-    private $actionExecutors = [];
+    protected $actionExecutors = [];
 
     /**
      * @var Promotion[]
      */
-    private $promotions;
+    protected $promotions;
 
     /**
      * Processor constructor.
@@ -114,7 +114,7 @@ class Processor
      *
      * @throws \Exception
      */
-    private function isEligible(ProductVariantInterface $productVariant, Promotion $promotion)
+    protected function isEligible(ProductVariantInterface $productVariant, Promotion $promotion)
     {
         foreach ($promotion->getRules() as $rule) {
             if (!$this->isEligibleToRule($productVariant, $rule)) {
@@ -131,7 +131,7 @@ class Processor
      *
      * @throws \Exception
      */
-    private function apply(ChannelPricing $channelPricing, Promotion $promotion)
+    protected function apply(ChannelPricing $channelPricing, Promotion $promotion)
     {
         foreach ($promotion->getActions() as $action) {
             $this->getActionExecutorByActionType($action->getType())->execute($channelPricing, $action);
@@ -142,7 +142,7 @@ class Processor
      * @param ChannelPricing $channelPricing
      * @param Promotion      $promotion
      */
-    private function setType(ChannelPricing $channelPricing, Promotion $promotion)
+    protected function setType(ChannelPricing $channelPricing, Promotion $promotion)
     {
         $channelPricing->setPromotionType(substr($promotion->getCode(), strrpos($promotion->getCode(), ' ') + 1));
     }
@@ -155,7 +155,7 @@ class Processor
      *
      * @throws \Exception
      */
-    private function isEligibleToRule(ProductVariantInterface $productVariant, PromotionRule $rule)
+    protected function isEligibleToRule(ProductVariantInterface $productVariant, PromotionRule $rule)
     {
         /** @var RuleCheckerInterface $checker */
         $checker = $this->getRuleCheckerByRuleType($rule->getType());
@@ -170,7 +170,7 @@ class Processor
      *
      * @throws \Exception
      */
-    private function getRuleCheckerByRuleType(string $ruleType): RuleCheckerInterface
+    protected function getRuleCheckerByRuleType(string $ruleType): RuleCheckerInterface
     {
         if (isset($this->ruleCheckers[$ruleType])) {
             return $this->ruleCheckers[$ruleType];
@@ -185,7 +185,7 @@ class Processor
      *
      * @throws \Exception
      */
-    private function getActionExecutorByActionType(string $actionType): ActionExecutorInterface
+    protected function getActionExecutorByActionType(string $actionType): ActionExecutorInterface
     {
         if (isset($this->actionExecutors[$actionType])) {
             return $this->actionExecutors[$actionType];
@@ -198,7 +198,7 @@ class Processor
      *
      * @return array
      */
-    private function getPromotions(ChannelInterface $channel): array
+    protected function getPromotions(ChannelInterface $channel): array
     {
         if (!$this->promotions) {
             $this->promotions = $this->promotionRepository->findActiveByChannel($channel);
